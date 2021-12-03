@@ -10,9 +10,9 @@ struct RunOptions: ParsableArguments {
 let options = RunOptions.parseOrExit()
 
 // MARK: - Actual work done here
-let input = try String(contentsOf: options.inURL, encoding: .utf8)
+let input = try String(contentsOf: options.inURL, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
 
-print(input)
+//print(input)
 
 enum Control: String {
   case forward, up, down
