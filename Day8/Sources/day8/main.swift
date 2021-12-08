@@ -29,14 +29,13 @@ func decodeRow(digits: [Substring]) -> [Set<Character>: Int] {
   let twoThreeFive = Set(digits.filter({ $0.count == 5 }).map { Set($0) })
   
   let three = twoThreeFive.first { $0.intersection(one) == one }!
-  let fourL = four.subtracting(one)
-  let five = twoThreeFive.first { $0.intersection(fourL) == fourL }!
-  let two = twoThreeFive.first { $0 != three && $0 != five }!
+  let five = twoThreeFive.first { $0.intersection(four.subtracting(one)) == four.subtracting(one) }!
+  let two = twoThreeFive.subtracting([three, five]).first!
   
   let zeroSixNine = Set(digits.filter({ $0.count == 6 }).map { Set($0) })
   let six = zeroSixNine.first { $0.intersection(one) != one}!
   let nine = zeroSixNine.first { $0.intersection(four) == four}!
-  let zero = zeroSixNine.first { $0 != six && $0 != nine }!
+  let zero = zeroSixNine.subtracting([six, nine]).first!
   
   return [zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9]
 }
