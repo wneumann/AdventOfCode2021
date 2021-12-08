@@ -27,7 +27,6 @@ func decodeRow(digits: [Substring]) -> [Set<Character>: Int] {
   let eight = Set(digits.first { $0.count == 7 }!)
 
   let twoThreeFive = Set(digits.filter({ $0.count == 5 }).map { Set($0) })
-  
   let three = twoThreeFive.first { $0.intersection(one) == one }!
   let five = twoThreeFive.first { $0.intersection(four.subtracting(one)) == four.subtracting(one) }!
   let two = twoThreeFive.subtracting([three, five]).first!
