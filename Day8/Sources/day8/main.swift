@@ -21,7 +21,6 @@ print("*  There are \(knowns.count) known readout values")
 // MARK: - Part 2
 
 func decodeRow(digits: [Substring]) -> [Set<Character>: Int] {
-  var segments = [Int: Character]()
   let one = Set(digits.first(where: { $0.count == 2 })!)
   let four = Set(digits.first(where: { $0.count == 4 })!)
   let seven = Set(digits.first(where: { $0.count == 3 })!)
@@ -29,44 +28,34 @@ func decodeRow(digits: [Substring]) -> [Set<Character>: Int] {
   var digitDict = [one: 1, four: 4, seven: 7, eight: 8]
 
   let seg1 = seven.symmetricDifference(one).first!
-  segments[1] = seg1
   
   let zeroSixNine = Set(digits.filter({ $0.count == 6 }).map { Set($0) })
-
   let nine = Set(zeroSixNine.filter({ digit in four.union(seven).allSatisfy({ digit.contains($0) }) }).first!)
   digitDict[nine] = 9
-  segments[7] = nine.symmetricDifference(four.union(seven)).first!
+  
+  let seg7 = nine.symmetricDifference(four.union(seven)).first!
+  let seg5 = eight.symmetricDifference(nine).first!
 
-  segments[5] = eight.symmetricDifference(nine).first!
-
-  var zeroSix = zeroSixNine
-  zeroSix.remove(nine)
-  let zeroS = zeroSix.filter({ digit in one.allSatisfy({ digit.contains($0) }) })
-  let zero = zeroS.first!
+  let zeroSix = zeroSixNine.subtracting([nine])
+  let zero = zeroSix.filter({ digit in one.allSatisfy({ digit.contains($0) }) }).first!
   digitDict[zero] = 0
-  let sixS = zeroSix.symmetricDifference(zeroS)
-  let six = sixS.first!
+  let six = zeroSix.subtracting([zero]).first!
   digitDict[six] = 6
   
-  var five = six
-  five.remove(segments[5]!)
+  let five = six.subtracting([seg5])
   digitDict[five] = 5
 
-  segments[4] = eight.symmetricDifference(zero).first!
-  segments[3] = eight.symmetricDifference(six).first!
+  let seg4 = eight.symmetricDifference(zero).first!
+  let seg3 = eight.symmetricDifference(six).first!
   
-  var seg6 = one
-  seg6.remove(segments[3]!)
-  segments[6] = seg6.first!
+  var s2 = four.subtracting(one)
+  s2.remove(seg4)
+  let seg2 = s2.first!
   
-  var seg2 = four.symmetricDifference(one)
-  seg2.remove(segments[4]!)
-  segments[2] = seg2.first!
-  
-  var three = nine
-  three.remove(segments[2]!)
+  let three = nine.subtracting([seg2])
   digitDict[three] = 3
-  let two = Set([segments[1]!, segments[3]!, segments[4]!, segments[5]!, segments[7]!])
+
+  let two = Set([seg1, seg3, seg4, seg5, seg7])
   digitDict[two] = 2
   
   return digitDict
