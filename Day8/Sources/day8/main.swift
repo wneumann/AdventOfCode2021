@@ -21,44 +21,24 @@ print("*  There are \(knowns.count) known readout values")
 // MARK: - Part 2
 
 func decodeRow(digits: [Substring]) -> [Set<Character>: Int] {
-  let one = Set(digits.first(where: { $0.count == 2 })!)
-  let four = Set(digits.first(where: { $0.count == 4 })!)
-  let seven = Set(digits.first(where: { $0.count == 3 })!)
-  let eight = Set(digits.first(where: { $0.count == 7 })!)
-  var digitDict = [one: 1, four: 4, seven: 7, eight: 8]
+  let one = Set(digits.first { $0.count == 2 }!)
+  let four = Set(digits.first { $0.count == 4 }!)
+  let seven = Set(digits.first { $0.count == 3 }!)
+  let eight = Set(digits.first { $0.count == 7 }!)
 
-  let seg1 = seven.symmetricDifference(one).first!
+  let twoThreeFive = Set(digits.filter({ $0.count == 5 }).map { Set($0) })
+  
+  let three = twoThreeFive.first { $0.intersection(one) == one }!
+  let fourL = four.subtracting(one)
+  let five = twoThreeFive.first { $0.intersection(fourL) == fourL }!
+  let two = twoThreeFive.first { $0 != three && $0 != five }!
   
   let zeroSixNine = Set(digits.filter({ $0.count == 6 }).map { Set($0) })
-  let nine = Set(zeroSixNine.filter({ digit in four.union(seven).allSatisfy({ digit.contains($0) }) }).first!)
-  digitDict[nine] = 9
+  let six = zeroSixNine.first { $0.intersection(one) != one}!
+  let nine = zeroSixNine.first { $0.intersection(four) == four}!
+  let zero = zeroSixNine.first { $0 != six && $0 != nine }!
   
-  let seg7 = nine.symmetricDifference(four.union(seven)).first!
-  let seg5 = eight.symmetricDifference(nine).first!
-
-  let zeroSix = zeroSixNine.subtracting([nine])
-  let zero = zeroSix.filter({ digit in one.allSatisfy({ digit.contains($0) }) }).first!
-  digitDict[zero] = 0
-  let six = zeroSix.subtracting([zero]).first!
-  digitDict[six] = 6
-  
-  let five = six.subtracting([seg5])
-  digitDict[five] = 5
-
-  let seg4 = eight.symmetricDifference(zero).first!
-  let seg3 = eight.symmetricDifference(six).first!
-  
-  var s2 = four.subtracting(one)
-  s2.remove(seg4)
-  let seg2 = s2.first!
-  
-  let three = nine.subtracting([seg2])
-  digitDict[three] = 3
-
-  let two = Set([seg1, seg3, seg4, seg5, seg7])
-  digitDict[two] = 2
-  
-  return digitDict
+  return [zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9]
 }
 
 let readouts: [Int] = chop.map { row in
